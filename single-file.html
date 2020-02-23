@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load Posenet -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+ </head>
+
+  <body>
+      <div id="main" style="display: flex; position:relative" >
+        <img id='cat' src='/images/person-4s.jpg'/>
+        <canvas style="position: absolute;" ></canvas>
+      </div>
+  </body>
+  <!-- Place your code in the script tag below. You can also use an external .js file -->
+  <script>
+    var flipHorizontal = false;
+
+    var imageElement = document.getElementById('cat');
+    const canvas = document.querySelector('#main canvas');
+
+    posenet.load()
+    .then(function(net){
+        console.log('estimateMultiplePoses .... ');
+        return net.estimateMultiplePoses(imageElement, {
+            flipHorizontal: false,
+            maxDetections: 2,
+            scoreThreshold: 0.6,
+            nmsRadius: 20})
+    }).then(function(poses){
+        console.log('got Poses .... ', poses);
+        canvas.width = imageElement.width;
+        canvas.height = imageElement.height;
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#FF0000";
+
+        poses.forEach(element => {
+            element.keypoints.forEach(point => {
+                const { position, part } = point;
+                // ctx.font = "12px Arial";
+                ctx.fillText(part, position.x + 10, position.y + 5);
+                ctx.fillRect(position.x, position.y, 5, 5);
+            })
+        });
+    })
+  </script>
+</html>
