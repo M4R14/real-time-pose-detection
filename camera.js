@@ -5,10 +5,11 @@ const video = document.querySelector('video');
     const canvas = document.createElement('canvas');
 
     const constraints = {
-        video: {
-            width: 640,
-            height: 480
-        }
+        video:  true,
+        // video: {
+        //     width: 640,
+        //     height: 480
+        // }
     };
 
     navigator.mediaDevices.getUserMedia(constraints)
@@ -24,12 +25,7 @@ const video = document.querySelector('video');
     }
 
     const estimateMultiplePoses = () => {
-        posenet.load({
-            architecture: 'MobileNetV1',
-            outputStride: 16,
-            inputResolution: { width: 640, height: 480 },
-            multiplier: 0.75
-        })
+        posenet.load()
         .then(function(net){
             console.log('estimateMultiplePoses .... ');
             return net.estimateMultiplePoses(img, {
@@ -44,7 +40,7 @@ const video = document.querySelector('video');
             var ctx = display.getContext("2d");
             ctx.fillStyle = "#FF0000";
 
-            poses.forEach(element => marker(element.keypoints, ctx));
+            poses.forEach(element => skeletonMarker(element.keypoints, ctx));
         })
     }
 
